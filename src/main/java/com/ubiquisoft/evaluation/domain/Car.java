@@ -3,8 +3,10 @@ package com.ubiquisoft.evaluation.domain;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -17,21 +19,27 @@ public class Car {
 	private List<Part> parts;
 
 	public Map<PartType, Integer> getMissingPartsMap() {
-		/*
-		 * Return map of the part types missing.
-		 *
-		 * Each car requires one of each of the following types:
-		 *      ENGINE, ELECTRICAL, FUEL_FILTER, OIL_FILTER
-		 * and four of the type: TIRE
-		 *
-		 * Example: a car only missing three of the four tires should return a map like this:
-		 *
-		 *      {
-		 *          "TIRE": 3
-		 *      }
-		 */
+		Map<PartType, Integer> expectedParts = new HashMap<>();
+		expectedParts.put(PartType.ELECTRICAL, 1);
+		expectedParts.put(PartType.ENGINE, 1);
+		expectedParts.put(PartType.FUEL_FILTER, 1);
+		expectedParts.put(PartType.OIL_FILTER, 1);
+		expectedParts.put(PartType.TIRE, 4);
 
-		return null;
+		for (Part part : parts){
+			Integer count = expectedParts.get(part.getType());
+			if (count == null){
+				continue;
+			}
+			else if (count == 1) {
+				expectedParts.remove(part.getType());
+			}
+			else {
+				expectedParts.put(part.getType(), count - 1);
+			}
+
+		}
+		return expectedParts;
 	}
 
 	@Override
